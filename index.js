@@ -1,7 +1,14 @@
-var Twitter = require('twitter');
-var fs = require('fs');
-var _ = require('lodash');
-var Q = require('q');
+var env = process.env.RACK_ENV;
+
+var express = require('express')
+  , compression = require('compression')
+  , Twitter = require('twitter')
+  , fs = require('fs')
+  , _ = require('lodash')
+  , Q = require('q')
+  , app = express();
+
+var apicache = require('apicache').options({ debug: true }).middleware;
 
 var client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -10,65 +17,32 @@ var client = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
 });
 
-var params = {
-  screen_name: 'SlowsBBQ',
-  trim_user: true,
-  count: 100,
-  include_rts: true,
-  include_entities: true
-};
+app.use(compression()); //gzip!
 
-console.time('getEmbends');
+app.get("/cards/:handle", apicache('15 minutes'), function(req, res, next){
 
-client.get('statuses/user_timeline', params, function(error, tweets, response){
-  if (!error) {
-    var _embeds = [];
-
-    withMedia(tweets).forEach(function(tweet){
-      _embeds.push(embed(tweet));
+  console.time('getEmbends');
+  timeline(req.params.handle)
+    .then(function(data){
+      console.timeEnd('getEmbends');
+      res.send({'cards': data})
+    }, function(error){
+      res.status(500).send({'error': data})
     })
 
-    Q.allSettled(_embeds)
-    .then(settled)
-    .done(function(embeds){
-      console.log('all done')
-      console.timeEnd('getEmbends');
-      console.log(embeds)
-    });
+})
 
-  } else {
-    console.log('error: ', error)
-  }
-});
+app.use(function(req, res, next){ res.sendfile('./public/index.html'); })
+
+var port = process.env.PORT || 8080;
+app.listen(port);
+
+console.log("listening on port " + port);
 
 
-// fs.readFile('./temp/response.json', function (err, data) {
-//   if (err) {
-//     throw err;
-//   }
-//   var allTweets = JSON.parse(data.toString());
-//
-//   var tweets = withMedia(allTweets);
-//
-//   console.log(tweets.length + ' tweets have images.');
-//
-//   var _embeds = [
-//     embed(tweets[0]),
-//     embed(tweets[1])
-//   ];
-//
-//   // tweets.forEach(function(tweet){
-//   //   _embeds.push(embed(tweet));
-//   // })
-//
-//   Q.allSettled(_embeds)
-//   .then(settled)
-//   .done(function(embeds){
-//     console.log('all done')
-//     console.log(embeds)
-//   });
-//
-// });
+////////
+/// helpers ============================
+
 
 function settled(results) {
   var embeds = [];
@@ -108,6 +82,43 @@ function embed(tweet){
       defer.reject(error);
     } else {
       defer.resolve(tweets);
+    }
+  });
+
+  return defer.promise;
+}
+
+function timeline(handle){
+  var defer = Q.defer();
+  var maxCards = 10;
+  var params = {
+    screen_name: handle,
+    trim_user: true,
+    count: 100,
+    include_rts: true,
+    include_entities: true
+  };
+
+  client.get('statuses/user_timeline', params, function(error, tweets, response){
+    if (!error) {
+      var _embeds = [];
+
+      withMedia(tweets).forEach(function(tweet){
+        if(_embeds.length < maxCards) {
+          _embeds.push(embed(tweet));
+        }
+      })
+
+      Q.allSettled(_embeds)
+      .then(settled)
+      .done(function(embeds){
+        console.log('all done')
+        defer.resolve(embeds)
+      });
+
+    } else {
+      res.send({error: error})
+      defer.reject(error);
     }
   });
 
