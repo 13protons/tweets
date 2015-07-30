@@ -1,0 +1,29 @@
+{
+  "name": "tweets",
+  "version": "1.0.0",
+  "description": "serve oembed snippets from any twitter feed",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alanguir/tweets.git"
+  },
+  "keywords": [
+    "twitter",
+    "tweets",
+    "timeline",
+    "oembed"
+  ],
+  "author": "Alan Languirand <alan@13protons.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alanguir/tweets/issues"
+  },
+  "homepage": "https://github.com/alanguir/tweets",
+  "dependencies": {
+    "q": "^1.4.1",
+    "twitter": "1.2.4"
+  }
+}
