@@ -20,12 +20,14 @@ var client = new Twitter({
 app.use(compression()); //gzip!
 
 app.use(function(req, res, next){
-
   var whitelist = ['localhost:4000', 'localhost:8080', 'slowsbarbq.com']
+  var host = req.get('host');
 
-  if(whitelist.indexOf(req.get('host')) > -1){
-    res.setHeader('Access-Control-Allow-Origin', req.get('host'));
-  }
+  whitelist.forEach(function(val, key){
+    if (host.indexOf(val) > -1){
+      res.setHeader('Access-Control-Allow-Origin', host);
+    }
+  })
 
   next();
 });
