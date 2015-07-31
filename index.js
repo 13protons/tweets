@@ -19,13 +19,33 @@ var client = new Twitter({
 
 app.use(compression()); //gzip!
 
-app.get("/cards/:handle", apicache('15 minutes'), function(req, res, next){
+app.use(function(req, res, next){
 
-  console.time('getEmbends');
+  var whitelist = ['localhost:4000', 'localhost:8080', 'slowsbarbq.com']
+
+  if(whitelist.indexOf(req.get('host')) > -1){
+    res.setHeader('Access-Control-Allow-Origin', req.get('host'));
+  }
+
+  next();
+});
+
+app.get("/cards/:handle", apicache('20 minutes'), function(req, res, next){
+
+  console.time('getEmbends'); // Track how long this takes!
+  var startTime = Date.now();
+
   timeline(req.params.handle)
     .then(function(data){
-      console.timeEnd('getEmbends');
-      res.send({'cards': data})
+      console.timeEnd('getEmbends'); // How long did it take?
+      var endTime = Date.now()
+
+      res.send({
+        'created_at': endTime,
+        'generation_time': (endTime - startTime) + 'ms',
+        'cached_until': endTime + (20 * 60 * 1000),
+        'cards': data
+      })
     }, function(error){
       res.status(500).send({'error': data})
     })
@@ -79,12 +99,12 @@ function embed(tweet){
   //console.log(params)
   client.get('statuses/oembed', params, function(error, tweets, response){
     if (error) {
+      console.log('cannot get embed code for ', tweet.id_str)
       defer.reject(error);
     } else {
       defer.resolve(tweets);
     }
   });
-
   return defer.promise;
 }
 
@@ -117,7 +137,6 @@ function timeline(handle){
       });
 
     } else {
-      res.send({error: error})
       defer.reject(error);
     }
   });
