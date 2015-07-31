@@ -34,6 +34,28 @@ app.use(function(req, res, next){
   next();
 });
 
+app.get("/media/:handle", apicache('20 minutes'), function(req, res, next){
+  console.time('getMedia'); // Track how long this takes!
+  var startTime = Date.now();
+
+  console.log(req.params.handle)
+  media_timeline(req.params.handle)
+    .then(function(data){
+      console.timeEnd('getMedia'); // How long did it take?
+      var endTime = Date.now()
+
+      res.send({
+        'created_at': endTime,
+        'generation_time': (endTime - startTime) + 'ms',
+        'cached_until': endTime + (20 * 60 * 1000),
+        'tweets': data
+      })
+    }, function(error){
+      res.status(500).send({'error': data})
+    })
+
+});
+
 app.get("/cards/:handle", apicache('20 minutes'), function(req, res, next){
 
   console.time('getEmbends'); // Track how long this takes!
@@ -98,7 +120,8 @@ function embed(tweet){
   var params = {
     id: tweet.id_str,
     omit_script: true,
-    hide_thread: true
+    hide_thread: true,
+    maxwidth: 350
   }
   //console.log(params)
   client.get('statuses/oembed', params, function(error, tweets, response){
@@ -139,6 +162,40 @@ function timeline(handle){
         console.log('all done')
         defer.resolve(embeds)
       });
+
+    } else {
+      defer.reject(error);
+    }
+  });
+
+  return defer.promise;
+}
+
+
+function media_timeline(handle){
+  var defer = Q.defer();
+  var maxCards = 10;
+  var params = {
+    screen_name: handle,
+    trim_user: true,
+    count: 100,
+    include_rts: true,
+    include_entities: true
+  };
+
+
+  client.get('statuses/user_timeline', params, function(error, tweets, response){
+
+    if (!error) {
+      var _tweets = [];
+
+      withMedia(tweets).forEach(function(tweet){
+        if(_tweets.length < maxCards) {
+          _tweets.push(tweet);
+        }
+      })
+
+      defer.resolve(_tweets)
 
     } else {
       defer.reject(error);
