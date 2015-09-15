@@ -6,6 +6,7 @@ var express = require('express')
   , fs = require('fs')
   , _ = require('lodash')
   , Q = require('q')
+  , ig = require('instagram-node').instagram()
   , app = express();
 
 var apicache = require('apicache').options({ debug: true }).middleware;
@@ -16,6 +17,9 @@ var client = new Twitter({
   access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
   access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
 });
+
+ig.use({ client_id: process.env.INSTAGRAM_ID,
+         client_secret: process.env.INSTAGRAM_SECRET });
 
 app.use(compression()); //gzip!
 
@@ -29,12 +33,41 @@ app.use(function(req, res, next){
     }
   })
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  //res.setHeader('Access-Control-Allow-Origin', '*');
 
   next();
 });
 
-app.get("/media/:handle", apicache('20 minutes'), function(req, res, next){
+app.get("/photos/:user", apicache('30 minutes'), function(req, res, next){
+  ig.user_media_recent(req.params.user, {count: 10}, function(err, medias, pagination, remaining, limit) {
+    if(err){
+      console.log('error: ', err);
+      res.status(500).send({'error ': err});
+    }
+
+    output = _.map(medias, function(val, i){
+      var caption = '';
+      if (val.caption){
+        caption = val.caption.text;
+      }
+
+      return {
+        type: val.type || 'image',
+        images: val.images || false,
+        location: val.location || false,
+        posted: val.created_time,
+        caption: caption
+      }
+    })
+
+    console.log('media: ', medias);
+
+    res.send(output);
+  });
+
+})
+
+app.get("/media/:handle", apicache('30 minutes'), function(req, res, next){
   console.time('getMedia'); // Track how long this takes!
   var startTime = Date.now();
 
