@@ -24,9 +24,10 @@ ig.use({ client_id: process.env.INSTAGRAM_ID,
 app.use(compression()); //gzip!
 
 app.use(function(req, res, next){
-  var whitelist = ['localhost:4000', 'localhost:8080', 'slowsbarbq.com']
-  var host = req.get('host');
+  var whitelist = ['localhost:4000', 'localhost:8080', 'slowsbarbq.com', 'moss-willow.cloudvent.net']
+  var host = req.get('origin');
 
+  console.log(host)
   whitelist.forEach(function(val, key){
     if (host.indexOf(val) > -1){
       res.setHeader('Access-Control-Allow-Origin', host);
@@ -60,7 +61,7 @@ app.get("/photos/:user", apicache('30 minutes'), function(req, res, next){
       }
     })
 
-    console.log('media: ', medias);
+    //console.log('media: ', medias);
 
     res.send(output);
   });
@@ -113,7 +114,7 @@ app.get("/cards/:handle", apicache('20 minutes'), function(req, res, next){
 
 app.use(function(req, res, next){ res.sendfile('./public/index.html'); })
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 app.listen(port);
 
 console.log("listening on port " + port);
