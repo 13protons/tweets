@@ -41,7 +41,7 @@ app.use(function(req, res, next){
   next();
 });
 
-app.get("/user/:name", apicache('2 hours')function(req, res, next){
+app.get("/user/:name", apicache('2 hours'), function(req, res, next){
   instagramUserByName(req.params.name).then(function(data){
     res.send(data);
   }, function(err){
