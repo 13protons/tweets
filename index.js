@@ -24,10 +24,12 @@ ig.use({ client_id: process.env.INSTAGRAM_ID,
 app.use(compression()); //gzip!
 
 app.use(function(req, res, next){
-  var whitelist = ['localhost:4000', 'localhost:8080', 'slowsbarbq.com', 'moss-willow.cloudvent.net']
+  var whitelist = ['localhost:4000', 'localhost:3000', 'localhost:8080', 'slowsbarbq.com', 'moss-willow.cloudvent.net']
   var host = req.get('origin');
-
-  console.log(host)
+  if(host == undefined){
+    host = req.get('host');
+  }
+  //console.log('host', host)
   whitelist.forEach(function(val, key){
     if (host.indexOf(val) > -1){
       res.setHeader('Access-Control-Allow-Origin', host);
@@ -39,32 +41,46 @@ app.use(function(req, res, next){
   next();
 });
 
+app.get("/user/:name", apicache('2 hours')function(req, res, next){
+  instagramUserByName(req.params.name).then(function(data){
+    res.send(data);
+  }, function(err){
+    res.status(404).send(err);
+  })
+})
+
 app.get("/photos/:user", apicache('30 minutes'), function(req, res, next){
-  ig.user_media_recent(req.params.user, {count: 10}, function(err, medias, pagination, remaining, limit) {
-    if(err){
-      console.log('error: ', err);
-      res.status(500).send({'error ': err});
-    }
+  instagramUserByName(req.params.user).then(function(data){
 
-    output = _.map(medias, function(val, i){
-      var caption = '';
-      if (val.caption){
-        caption = val.caption.text;
+    ig.user_media_recent(data.id, {count: 10}, function(err, medias, pagination, remaining, limit) {
+      if(err){
+        console.log('error: ', err);
+        res.status(500).send({'error ': err});
       }
 
-      return {
-        type: val.type || 'image',
-        images: val.images || false,
-        location: val.location || false,
-        posted: val.created_time,
-        caption: caption
-      }
-    })
+      output = _.map(medias, function(val, i){
+        var caption = '';
+        if (val.caption){
+          caption = val.caption.text;
+        }
 
-    //console.log('media: ', medias);
+        return {
+          type: val.type || 'image',
+          images: val.images || false,
+          location: val.location || false,
+          posted: val.created_time,
+          caption: caption
+        }
+      })
 
-    res.send(output);
-  });
+      //console.log('media: ', medias);
+
+      res.send(output);
+    });
+
+  }, function(err){
+    res.status(404).send(err);
+  })
 
 })
 
@@ -122,6 +138,31 @@ console.log("listening on port " + port);
 
 ////////
 /// helpers ============================
+
+// returns an array of possible user names
+function instagramUserByName(name){
+  var defer = Q.defer();
+
+  ig.user_search(name, function(err, users){
+    if(err){
+      console.log('error: ', err);
+      defer.reject(err);
+    } else {
+      var matched = false;
+      var user = _.filter(users, function(val, i){
+        return val.username === name;
+      })
+      if(user.length == 1){
+        defer.resolve(user[0]);
+      } else {
+        defer.reject('matching user not found');
+      }
+
+    }
+  });
+
+  return defer.promise;
+}
 
 
 function settled(results) {
