@@ -84,6 +84,14 @@ app.get("/photos/:user", apicache('30 minutes'), function(req, res, next){
 
 })
 
+app.get("/recent/:handle", apicache('30 minutes'), function(req, res, next){
+  recentTweets(req.params.handle).then(function(data){
+    res.send(trimTweets(data));
+  }, function(err){
+    res.status(404).send(err);
+  })
+})
+
 app.get("/media/:handle", apicache('30 minutes'), function(req, res, next){
   console.time('getMedia'); // Track how long this takes!
   var startTime = Date.now();
@@ -209,6 +217,41 @@ function embed(tweet){
   });
   return defer.promise;
 }
+
+function recentTweets(handle){
+  var defer = Q.defer();
+  var params = {
+    screen_name: handle,
+    trim_user: true,
+    count: 10,
+    include_rts: true,
+    include_entities: true
+  };
+
+  client.get('statuses/user_timeline', params, function(error, tweets, response){
+    if (error) {
+      defer.reject(error);
+    } else {
+      defer.resolve(tweets)
+    }
+  });
+
+  return defer.promise;
+
+}
+
+function trimTweets(tweets){
+  return _.map(tweets, function(val, i){
+    var tweet = {
+      created_at: val.created_at,
+      id_str:     val.id_str,
+      text:       val.text,
+      media:      _.get(val, 'entities.media[0].media_url', '')
+    }
+    return tweet;
+  })
+}
+
 
 function timeline(handle){
   var defer = Q.defer();
