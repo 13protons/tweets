@@ -246,6 +246,7 @@ function trimTweets(tweets){
       created_at: val.created_at,
       id_str:     val.id_str,
       text:       val.text,
+      source:     'twitter',
       media:      _.get(val, 'entities.media[0].media_url', '')
     }
     return tweet;
