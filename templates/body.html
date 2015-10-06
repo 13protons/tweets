@@ -1,0 +1,23 @@
+<h2><%= _subject %> from <%= name %></h2>
+
+<p>
+  <a href="mailto:<%= _replyto %>?Subject=RE:<%= _subject %>" target="_top">Reply to <%= name %></a>
+</p>
+
+<table>
+  <tr><td> Name           </td> <td><%= name %>                 </tr>
+  <tr><td> Reply To       </td> <td><%= _replyto %></td>        </tr>
+  <tr><td> Phone          </td> <td><%= phone %></td>           </tr>
+  <tr><td> Flexible Date? </td> <td><%= flexible_dates %></td>  </tr>
+  <tr><td> Start          </td> <td><%= start_date %> at <%= start_time %> </td></tr>
+  <tr><td> End            </td> <td><%= end_date %> at <%= end_time %>     </td></tr>
+  <tr><td> Guest Count    </td> <td><%= guest_count %></td>     </tr>
+  <tr><td> Event Type     </td> <td><%= event_type %></td>      </tr>
+  <tr><td> Location       </td> <td><%= location %></td>        </tr>
+  <tr><td> How I heard about slows    </td> <td><%= how_did_you_hear %>    </td></tr>
+  <tr><td> More Info      </td> <td><%= more_info %></td>       </tr>
+</table>
+
+<p>
+  <a href="mailto:<%= _replyto %>?Subject=RE:<%= _subject %>" target="_top">Reply to <%= name %></a>
+</p>
