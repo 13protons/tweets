@@ -32,5 +32,8 @@
     "mailgun-js": "^0.7.1",
     "q": "^1.4.1",
     "twitter": "1.2.4"
+  },
+  "devDependencies": {
+    "universal-analytics": "^0.3.9"
   }
 }
