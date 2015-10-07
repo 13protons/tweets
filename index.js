@@ -18,10 +18,7 @@ app.use(bodyParser.urlencoded({           // to support URL-encoded bodies
 
 app.post("/contact", function(req, res, next){
   mail.log(req.body).then(function(data){
-    if(data.next){
-      res.redirect(data.next);
-    }
-    res.end(data.body);
+    res.send(data);
   }, function(err){
     res.status(404).send(err);
   })
