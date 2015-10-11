@@ -1,11 +1,13 @@
 var express    = require('express')
   , env        = process.env.RACK_ENV
   , bodyParser = require('body-parser')
-  , app        = express();
+  , request    = require('request');
 
-var twitter    = require('./scripts/tweets')
-var instagram  = require('./scripts/instagram')
-var mail       = require('./scripts/mail')
+var app        = express();
+
+var twitter    = require('./scripts/tweets');
+var instagram  = require('./scripts/instagram');
+var mail       = require('./scripts/mail');
 
 var apicache   = require('apicache').options({ debug: true }).middleware;
 
@@ -15,6 +17,21 @@ app.use( bodyParser.json() );             // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({           // to support URL-encoded bodies
   extended: true
 }));
+
+
+app.get("/menu_widgets/:resource", apicache('2 hours'), function(req, res, next){
+  var url = 'https://www.beermenus.com/menu_widgets/' + req.params.resource
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  request(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      res.send(body);
+    } else {
+      res.status(404).send(error);
+    }
+  })
+
+})
 
 app.post("/contact", function(req, res, next){
   mail.log(req.body).then(function(data){
