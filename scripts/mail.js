@@ -66,7 +66,7 @@ function requestEmail(body){
   var data = {
     from: email,
     to: emailTo,
-    subject: body._subject + ' ' + guestCount(body.guest_count) + ' guests',
+    subject: body._subject + ': ' + guestCount(body.guest_count) + ' guests, from ' + body.name,
     html: emailBody,
     'h:Reply-To': body._replyto
   }
