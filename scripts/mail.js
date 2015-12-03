@@ -8,7 +8,6 @@ var mailgun = new require('mailgun-js')({
 });
 
 var emailFrom = 'postmaster@slowstogo.com';
-
 var emailTo = 'catering@slowstogo.com';
 
 module.exports = {
@@ -63,9 +62,10 @@ function requestEmail(body){
 
   var emailBody = _.template(_body)(body);
 
+
   var data = {
     from: email,
-    to: emailTo,
+    to: resolveTo(body._targets, emailTo),
     subject: body._subject + ': ' + guestCount(body.guest_count) + ' guests, from ' + body.name,
     html: emailBody,
     'h:Reply-To': body._replyto
@@ -122,6 +122,13 @@ function confirmEmail(body){
   return defer.promise;
 }
 
+function resolveTo(encoded, _default) {
+  //fail fast
+  if(!encoded || encoded.length < 1){
+    return _default
+  }
+  return encoded.repalce('[at]', '@').replace('[dot]', '.');
+}
 
 function guestCount(guests){
   if(guests < 50){
