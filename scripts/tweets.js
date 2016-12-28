@@ -1,5 +1,4 @@
 var Twitter = require('twitter')
-  , fs = require('fs')
   , _ = require('lodash')
   , Q = require('q');
 

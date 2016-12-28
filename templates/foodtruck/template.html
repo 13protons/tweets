@@ -1,0 +1,43 @@
+<h1>Catering Request</h1>
+<h2><%= slug %></h2>
+<p>Recieved at <%= requestedTime %><p>
+
+<p><%= map %></p>
+
+<h4>Details</h4>
+<p>
+  <a href="mailto:<%= details.email %>?Subject=RE:<%= slug %>" target="_top">Reply to <%= details.name %></a>
+</p>
+<table style="width:500px; margin-left: 100px;">
+  <tr><td <%=b%> colspan="2"> Event  </td></tr>
+
+  <tr><td <%=s%>> Event Type         </td> <td <%=s%>><%= details.event_type %></td>    </tr>
+  <tr><td <%=s%>> Guest Count        </td> <td <%=s%>><%= details.guests %></td>        </tr>
+  <tr><td <%=s%>> Start Time         </td> <td <%=s%>><%= start %></td>                 </tr>
+  <tr><td <%=s%>> End Time           </td> <td <%=s%>><%= end %></td>                   </tr>
+  <tr><td <%=s%>> Flexibile Timing?  </td> <td <%=s%>><%= flexible %></td>              </tr>
+
+  <tr><td <%=b%> colspan="2"> Service  </td></tr>
+
+  <tr><td <%=s%>> Service Type       </td> <td <%=s%>><%= service.type  %></td>         </tr>
+  <tr><td <%=s%>> Closest Slows      </td> <td <%=s%>><%= slows.label %></td>           </tr>
+
+  <tr><td <%=b%> colspan="2"> Offsite Location  </td></tr>
+
+  <tr><td <%=s%>> Street Address     </td> <td <%=s%>><%= address.street  %></td>       </tr>
+  <tr><td <%=s%>> City               </td> <td <%=s%>><%= address.city  %></td>         </tr>
+  <tr><td <%=s%>> State              </td> <td <%=s%>><%= address.state  %></td>        </tr>
+  <tr><td <%=s%>> Zip                </td> <td <%=s%>><%= address.zip  %></td>          </tr>
+
+  <tr><td <%=b%> colspan="2"> Contact  </td></tr>
+
+  <tr><td <%=s%>> Customer Name  </td> <td <%=s%>><%= details.name  %></td>              </tr>
+  <tr><td <%=s%>> Customer Email </td> <td <%=s%>><%= details.email  %></td>             </tr>
+  <tr><td <%=s%>> Customer Phone </td> <td <%=s%>><%= details.phone  %></td>             </tr>
+</table>
+
+<p><%= slug %></p>
+<p>
+  <a href="mailto:<%= details.email %>?Subject=RE:<%= slug %>" target="_top">Reply to <%= details.name %></a>
+</p>
+<p>Recieved at <%= requestedTime %><p>

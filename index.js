@@ -8,6 +8,7 @@ var app        = express();
 var twitter    = require('./scripts/tweets');
 var instagram  = require('./scripts/instagram');
 var mail       = require('./scripts/mail');
+var catering   = require('./scripts/catering');
 
 var apicache   = require('apicache').options({ debug: true }).middleware;
 
@@ -17,7 +18,6 @@ app.use( bodyParser.json() );             // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({           // to support URL-encoded bodies
   extended: true
 }));
-
 
 app.get("/menu_widgets/:resource", apicache('2 hours'), function(req, res, next){
   var url = 'https://www.beermenus.com/menu_widgets/' + req.params.resource
@@ -34,7 +34,27 @@ app.get("/menu_widgets/:resource", apicache('2 hours'), function(req, res, next)
 })
 
 app.post("/contact", function(req, res, next){
+  console.log('legacy catering request', req.body);
   mail.log(req.body).then(function(data){
+    res.send(data);
+  }, function(err){
+    res.status(404).send(err);
+  })
+})
+
+app.use("/catering", function(req, res, next){
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  next();
+});
+
+app.options("/catering", function(req, res, next){
+  res.send(200);
+});
+
+app.post("/catering", function(req, res, next){
+  console.log('catering request:', req.body)
+  catering.log(req.body).then(function(data){
     res.send(data);
   }, function(err){
     res.status(404).send(err);

@@ -2,6 +2,8 @@ var _  = require('lodash')
   , fs = require('fs')
   , Q  = require('q');
 
+var defaultBody = require('./default.js');
+
 var mailgun = new require('mailgun-js')({
   apiKey: process.env.MAILGUN_API_KEY,
   domain: process.env.MAILGUN_DOAMAIN
@@ -15,16 +17,18 @@ module.exports = {
 }
 
 function log(body) {
+  body = _.assign({}, defaultBody, body);
   var defer = Q.defer();
 
   if (body._gotcha){
+    console.log('gotchya!')
     defer.resolve({'next': body._next, 'body': body});
     return defer.promise;
   }
 
   Q.allSettled([requestEmail(body), confirmEmail(body)])
     .then(function (results) {
-      var output = {'next': body._next, 'messages': []}
+      var output = {'next': body.confirm, 'messages': []}
       var errors = [];
       results.forEach(function (result) {
         //google analytics here
@@ -37,7 +41,6 @@ function log(body) {
       });
 
       defer.resolve(output);
-
     });
 
   // confirmEmail(body).then(function(results){
@@ -46,31 +49,33 @@ function log(body) {
   //   defer.reject(err);
   // })
 
-
   return defer.promise;
 }
 
-
-
 function requestEmail(body){
   var defer = Q.defer();
-  var email = [body.name, ' <'+emailFrom+'>'].join('');
+  var email = [body.details.name, ' <'+emailFrom+'>'].join('');
 
-  var _body = fs.readFileSync('./templates/body.html', "utf8");
+  var _body = fs.readFileSync('./templates/'+body.service.type+'/template.html', "utf8");
+  var _slug = fs.readFileSync('./templates/'+body.service.type+'/slug.html', "utf8");
+  var _map = fs.readFileSync('./templates/'+body.service.type+'/map.html', "utf8");
+
   body.s = fs.readFileSync('./templates/td-style.txt', "utf8");
+  body.b = fs.readFileSync('./templates/separator-style.txt', "utf8");
   body.requestedTime = new Date().toLocaleString();
 
+  body.slug = _.template(_slug)(body);
+  body.map = _.template(_map)(body);
   var emailBody = _.template(_body)(body);
-
 
   var data = {
     from: email,
-    to: resolveTo(body._targets, emailTo),
-    subject: body._subject + ': ' + guestCount(body.guest_count) + ' guests, from ' + body.name,
+    to: body.details.email, //emailTo + ', ' + body.service.cateringEmails,
+    subject: body.slug,
     html: emailBody,
-    'h:Reply-To': body._replyto
+    'h:Reply-To': body.details.email
   }
-  // defer.resolve('response')
+
   // Invokes the method to send emails given the above data with the helper library
   mailgun.messages().send(data, function (err, response) {
       //If there is an error, render the error page
@@ -91,18 +96,21 @@ function requestEmail(body){
 function confirmEmail(body){
   var defer = Q.defer();
 
-  var _body = fs.readFileSync('./templates/confirm.html', "utf8");
+  var _body = fs.readFileSync('./templates/confirm/template.html', "utf8");
+  var _slug = fs.readFileSync('./templates/confirm/slug.html', "utf8");
   body.s = fs.readFileSync('./templates/td-style.txt', "utf8");
+  body.b = fs.readFileSync('./templates/separator-style.txt', "utf8");
   body.emailTo = emailTo;
-  body = normalizeTime(body);
+
+  body.slug = _.template(_slug)(body);
   var emailBody = _.template(_body)(body);
 
   var data = {
     from: emailFrom,
-    to: body._replyto,
-    subject: 'Confirmation: ' + body._subject,
+    to: body.details.email,
+    subject: body.slug,
     html: emailBody,
-    'h:Reply-To': emailTo
+    'h:Reply-To': emailTo + ', ' + body.service.cateringEmails,
   }
 
   // defer.resolve('response')
@@ -120,45 +128,4 @@ function confirmEmail(body){
   });
 
   return defer.promise;
-}
-
-function resolveTo(encoded, _default) {
-  //fail fast
-  if(!encoded || encoded.length < 1){
-    return _default
-  }
-  return encoded.repalce('[at]', '@').replace('[dot]', '.');
-}
-
-function normalizeTime(body){
-  body.start_time = fixTime(body.start_time);
-  body.end_time = fixTime(body.end_time);
-  return body;
-}
-
-function fixTime(t) {
-	var hours = parseInt(t.split(':')[0]);
-  var mins = parseInt(t.split(':')[1]);
-
-  if (hours >= 1 && hours <= 12) {
-	  return t + ' am';
-  }
-  if (hours == 0) {
-  	return '12' + ':' + mins + ' am';
-  }
-  if (hours > 12) {
-  	return (hours - 12) + ':' + mins + ' pm';
-  }
-}
-
-function guestCount(guests){
-  if(guests < 50){
-    return '< 50';
-  } else if (guests < 100){
-    return '50-100';
-  } else if (guests < 150){
-    return '100-150';
-  } else {
-    return '> 150';
-  }
 }

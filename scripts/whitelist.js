@@ -9,7 +9,7 @@ module.exports = function(req, res, next){
     if (host.indexOf(val) > -1){
       res.setHeader('Access-Control-Allow-Origin', host);
     }
-  })
+  });
 
   next();
 }

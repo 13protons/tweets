@@ -1,0 +1,45 @@
+<table>
+  <tr>
+    <td><img src="http://slowsbarbq.com/img/ui/slows-badge.png" width="75" height="75"></td>
+    <td><font face="sans-serif" color="#ab2026">
+      <h1><%= slug %></h1>
+    </font></td>
+  </tr>
+</table>
+<hr />
+<p>
+  Thank you for your interest in Slows! Someone from our catering staff will be in touch with you shortly to confirm and discuss the details of your request. Here's the information we received:
+</p>
+
+<table style="width:500px; margin-left: 50px;">
+  <tr><td <%=b%> colspan="2"> Event  </td></tr>
+
+  <tr><td <%=s%>> Event Type         </td> <td <%=s%>><%= details.event_type %></td>    </tr>
+  <tr><td <%=s%>> Guest Count        </td> <td <%=s%>><%= details.guests %></td>        </tr>
+  <tr><td <%=s%>> Start Time         </td> <td <%=s%>><%= start %></td>                 </tr>
+  <tr><td <%=s%>> End Time           </td> <td <%=s%>><%= end %></td>                   </tr>
+  <tr><td <%=s%>> Flexibile Timing?  </td> <td <%=s%>><%= flexible %></td>              </tr>
+
+  <tr><td <%=b%> colspan="2"> Service  </td></tr>
+
+  <tr><td <%=s%>> Service Type       </td> <td <%=s%>><%= service.type  %></td>         </tr>
+  <tr><td <%=s%>> Closest Slows      </td> <td <%=s%>><%= slows.label %></td>           </tr>
+
+<% if (!service.noAddressRequired) { %>
+  <tr><td <%=b%> colspan="2"> Offsite Location  </td></tr>
+
+  <tr><td <%=s%>> Street Address     </td> <td <%=s%>><%= address.street  %></td>       </tr>
+  <tr><td <%=s%>> City               </td> <td <%=s%>><%= address.city  %></td>         </tr>
+  <tr><td <%=s%>> State              </td> <td <%=s%>><%= address.state  %></td>        </tr>
+  <tr><td <%=s%>> Zip                </td> <td <%=s%>><%= address.zip  %></td>          </tr>
+<% } %>
+  <tr><td <%=b%> colspan="2"> Contact  </td></tr>
+
+  <tr><td <%=s%>> Customer Name  </td> <td <%=s%>><%= details.name  %></td>              </tr>
+  <tr><td <%=s%>> Customer Email </td> <td <%=s%>><%= details.email  %></td>             </tr>
+  <tr><td <%=s%>> Customer Phone </td> <td <%=s%>><%= details.phone  %></td>             </tr>
+</table>
+<hr />
+<p>
+  <font face="sans-serif" color="#ab2026"><i><strong>Do you see anything missing or did you forget to add some details?</strong> No worries, just Reply to this email and we'll get it straightened out.</i></font>
+</p>
