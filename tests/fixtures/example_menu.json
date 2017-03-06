@@ -1,0 +1,143 @@
+{
+  "menu": {
+    "id": 3,
+    "location_id": 3,
+    "uuid": "c2402f2e-90e5-40cd-a455-68e45cf7f70c",
+    "name": "A different menu name",
+    "description": "A menu description",
+    "footer": "a footer for the menu",
+    "draft": false,
+    "unpublished": false,
+    "position": 0,
+    "show_price_on_untappd": true,
+    "push_notification_frequency": "real_time",
+    "created_at": "2016-11-08T16:59:05Z",
+    "updated_at": "2016-11-08T17:02:49Z",
+    "sections": [
+      {
+        "id": 7,
+        "menu_id": 3,
+        "position": 0,
+        "name": "A section name",
+        "description": "A section description.",
+        "type": "Section",
+        "created_at": "2016-11-08T16:59:05Z",
+        "updated_at": "2016-11-08T17:02:49Z",
+        "items": [
+          {
+            "id": 10,
+            "section_id": 7,
+            "position": 0,
+            "untappd_id": 4499,
+            "label_image": "https://untappd.akamaized.net/site/beer_logos/beer-4499_dc04a_sm.jpeg",
+            "brewery_location": "Santa Rosa, CA",
+            "abv": "8.0",
+            "ibu": "100.0",
+            "cask": true,
+            "nitro": false,
+            "tap_number": "4",
+            "rating": "4.5657",
+            "in_production": true,
+            "untappd_beer_slug": "russian-river-brewing-company-pliny-the-elder",
+            "untappd_brewery_id": 5143,
+            "name": "Pliny the Elder",
+            "original_name": "Pliny the Elder",
+            "custom_name": null,
+            "description": "A custom item description",
+            "custom_description": "A custom item description",
+            "original_description": "A true leader in the hop-wars of the west coast, Pliny the Elder hits you over the head with hoppy bitterness and manages to smooth the rough edges out enough to become an enjoyable brew.",
+            "style": "IPA - Imperial / Double",
+            "custom_style": null,
+            "original_style": "IPA - Imperial / Double",
+            "brewery": "Russian River Brewing Company",
+            "custom_brewery": null,
+            "original_brewery": "Russian River Brewing Company",
+            "created_at": "2016-11-08T16:59:05Z",
+            "updated_at": "2016-11-08T17:02:49Z",
+            "containers": [
+              {
+                "id": 13,
+                "item_id": 10,
+                "container_size_id": 5,
+                "price": "3.99",
+                "position": 0,
+                "created_at": "2016-11-08T17:02:49Z",
+                "updated_at": "2016-11-08T17:02:49Z",
+                "container_size": {
+                  "id": 5,
+                  "name": "Crowler",
+                  "position": 101,
+                  "created_at": "2016-03-01T15:36:26Z",
+                  "updated_at": "2016-08-24T20:55:13Z"
+                },
+                "_track_by": 13
+              }
+            ]
+          },
+          {
+            "id": 11,
+            "section_id": 7,
+            "position": 1,
+            "untappd_id": 3883,
+            "label_image": "https://untappd.akamaized.net/site/beer_logos/beer-3883_a0aa4_sm.jpeg",
+            "brewery_location": "Woodridge, IL",
+            "abv": "4.6",
+            "ibu": "0.0",
+            "cask": false,
+            "nitro": true,
+            "tap_number": "5",
+            "rating": "2.76162",
+            "in_production": true,
+            "untappd_beer_slug": "pabst-brewing-company-pabst-blue-ribbon",
+            "untappd_brewery_id": 963,
+            "name": "Pabst Blue Ribbon",
+            "original_name": "Pabst Blue Ribbon",
+            "custom_name": null,
+            "description": "A PBR beer",
+            "custom_description": "A PBR beer",
+            "original_description": "This is the original Pabst Blue Ribbon Beer. Nature's choicest products provide its prized flavor. Only the finest of hops and grains are used. Selected as America's Best in 1893.",
+            "style": "Lager - North American Adjunct",
+            "custom_style": null,
+            "original_style": "Lager - North American Adjunct",
+            "brewery": "Pabst Brewing Company",
+            "custom_brewery": null,
+            "original_brewery": "Pabst Brewing Company",
+            "created_at": "2016-11-08T16:59:05Z",
+            "updated_at": "2016-11-08T17:02:49Z",
+            "containers": [
+              {
+                "id": 14,
+                "item_id": 11,
+                "container_size_id": 5,
+                "price": "3.99",
+                "position": 0,
+                "created_at": "2016-11-08T17:02:49Z",
+                "updated_at": "2016-11-08T17:02:49Z",
+                "container_size": {
+                  "id": 5,
+                  "name": "Crowler",
+                  "position": 101,
+                  "created_at": "2016-03-01T15:36:26Z",
+                  "updated_at": "2016-08-24T20:55:13Z"
+                },
+                "_track_by": 14
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "on_deck_section": {
+      "id": 8,
+      "menu_id": 3,
+      "position": 0,
+      "name": "On Deck",
+      "description": "",
+      "type": "OnDeckSection",
+      "created_at": "2016-11-08T16:59:05Z",
+      "updated_at": "2016-11-08T16:59:05Z",
+      "public": false,
+      "items": []
+    }
+  }
+}

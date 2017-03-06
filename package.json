@@ -4,7 +4,7 @@
   "description": "serve oembed snippets from any twitter feed",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -w tests/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -30,11 +30,15 @@
     "instagram-node": "^0.5.8",
     "lodash": "^3.10.0",
     "mailgun-js": "^0.7.1",
+    "node-untappd": "^0.4.1",
     "q": "^1.4.1",
     "request": "^2.64.0",
     "twitter": "1.2.4"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.7",
     "universal-analytics": "^0.3.9"
   }
 }
