@@ -9,6 +9,7 @@ var twitter    = require('./scripts/tweets');
 var instagram  = require('./scripts/instagram');
 var mail       = require('./scripts/mail');
 var catering   = require('./scripts/catering');
+var untappd    = require('./scripts/untappd.js');
 
 var apicache   = require('apicache').options({ debug: true }).middleware;
 
@@ -74,7 +75,7 @@ app.get("/photos/:user", apicache('30 minutes'), function(req, res, next){
     res.send(data);
   }, function(err){
     res.status(404).send(err);
-  })
+  });
 })
 
 app.get("/recent/:handle", apicache('30 minutes'), function(req, res, next){
@@ -82,8 +83,16 @@ app.get("/recent/:handle", apicache('30 minutes'), function(req, res, next){
     res.send(twitter.trimTweets(data));
   }, function(err){
     res.status(404).send(err);
-  })
+  });
 })
+
+app.get('/beer/:menuId', apicache('2 hours'), function(req, res, next){
+  untappd.getMenu(req.params.menuId).then(function(data){
+    res.json(data);
+  }, function(err){
+    res.status(err.code).send(err.msg);
+  });
+});
 
 // call it a 404
 app.use(function(req, res, next){ res.sendfile('./public/index.html'); })

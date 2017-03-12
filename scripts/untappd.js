@@ -4,27 +4,50 @@
 
 var _ = require('lodash')
 var Q = require('q');
-var fs = require('fs');
+var request = require('request');
 
 module.exports = {
+  getMenu: getMenu,
   __extractMenuInfo: extractMenuInfo
 }
 
-function getMenu(menuId, sections){
+function getMenu(id, sections) {
+  let options = {
+    url: 'https://business.untappd.com/api/v1/menus/' + id + '?full=true',
+    headers: {
+      'Authorization': createAuthHeader()
+    }
+  }
+
   var defer = Q.defer();
 
-  fs.readFile('./example_menu.json', 'utf8', function(err, data){
-    if(err) {
-      defer.reject(err);
+  request(options, function callback(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      var info = JSON.parse(body);
+
+      defer.resolve(extractMenuInfo(info.menu));
       return;
     }
 
-    defer.resolve(data);
+    var errObj = {
+      code: 400,
+      msg: 'No menu found with that ID'
+    };
+
+    defer.reject(errObj);
   });
 
   return defer.promise;
 }
 
+function createAuthHeader() {
+  let token = process.env.UNTAPPD_ACCESS_TOKEN || '';
+  let email = process.env.UNTAPPD_EMAIL || '';
+
+  let encoded = new Buffer(email + ':' + token).toString('base64');
+  var headerValue = 'Basic ' + encoded;
+  return headerValue;
+}
 
 function extractBeerInfo(beer, additionalProps){
   /*
@@ -36,7 +59,23 @@ function extractBeerInfo(beer, additionalProps){
   price
   description
   */
-  return [beer];
+
+  var beers = [];
+
+  beer.containers.forEach(function(container){
+    var thisBeer = beer;
+    thisBeer.container = container;
+    thisBeer.container.container_size_name = container.container_size.name;
+
+    thisBeer.price = container.price;
+
+    delete thisBeer.container.container_size;
+    delete thisBeer.containers;
+
+    beers.push(thisBeer)
+  })
+
+  return beers;
 }
 
 function extractMenuInfo(menu, sections){
@@ -57,24 +96,32 @@ function extractMenuInfo(menu, sections){
     return acc;
   }, {});
 
-  var validSections = _.filter(menu.sections, function(section){
-    return sections.indexOf(section.id) > -1;
-  });
+  output.beers = [];
 
-  output.beers = validSections.reduce(function(acc, val, i){
-    var sectionHeader = {
-      'section_id': val.id,
-      'section_position': val.position,
-      'section_name': val.name,
-      'section_description': val.description
+  // if (!menu.unpublished) {
+    var validSections = menu.sections;
+
+    if (sections) {
+      validSections = _.filter(menu.sections, function(section){
+        return sections.indexOf(section.id) > -1;
+      });
     }
 
-    val.items.forEach(function(item){
-      var output = extractBeerInfo(item, sectionHeader);
-      acc = acc.concat(output);
-    })
-    return acc;
-  }, []);
+    output.beers = validSections.reduce(function(acc, val, i){
+      var sectionHeader = {
+        'section_id': val.id,
+        'section_position': val.position,
+        'section_name': val.name,
+        'section_description': val.description
+      }
+
+      val.items.forEach(function(item){
+        var output = extractBeerInfo(item, sectionHeader);
+        acc = acc.concat(output);
+      })
+      return acc;
+    }, []);
+  // }
 
   return output;
 }
