@@ -63,7 +63,7 @@ function extractBeerInfo(beer, additionalProps){
   var beers = [];
 
   beer.containers.forEach(function(container){
-    var thisBeer = beer;
+    var thisBeer = _.cloneDeep(beer);
     thisBeer.container = container;
     thisBeer.container.container_size_name = container.container_size.name;
 
@@ -121,23 +121,7 @@ function extractMenuInfo(menu, sections){
       })
       return acc;
     }, []);
-    output.beers = dedupeBeerList(output.beers);
   // }
 
   return output;
-}
-
-function dedupeBeerList(list){
-  return _(list)
-    .map(function(item, index){
-      return {
-        key: item.id + ':' + item.container.id,
-        at: index
-       }
-    })
-		.uniqBy('key')
-    .map(function(item){
-      return list[item.at];
-    })
-    .value();
 }
