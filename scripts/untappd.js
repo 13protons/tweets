@@ -75,7 +75,7 @@ function extractBeerInfo(beer, additionalProps){
     beers.push(thisBeer)
   })
 
-  return beers;
+  return beers
 }
 
 function extractMenuInfo(menu, sections){
@@ -121,7 +121,23 @@ function extractMenuInfo(menu, sections){
       })
       return acc;
     }, []);
+    output.beers = dedupeBeerList(output.beers);
   // }
 
   return output;
+}
+
+function dedupeBeerList(list){
+  return _(list)
+    .map(function(item, index){
+      return {
+        key: item.id + ':' + item.container.id,
+        at: index
+       }
+    })
+		.uniqBy('key')
+    .map(function(item){
+      return list[item.at];
+    })
+    .value();
 }
