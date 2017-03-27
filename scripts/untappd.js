@@ -24,7 +24,6 @@ function getMenu(id, sections) {
   request(options, function callback(error, response, body) {
     if (!error && response.statusCode == 200) {
       var info = JSON.parse(body);
-
       defer.resolve(extractMenuInfo(info.menu));
       return;
     }
@@ -50,32 +49,12 @@ function createAuthHeader() {
 }
 
 function extractBeerInfo(beer, additionalProps){
-  /*
-  name
-  style
-  icon
-  type
-  abv
-  price
-  description
-  */
-
-  var beers = [];
-
-  beer.containers.forEach(function(container){
-    var thisBeer = _.cloneDeep(beer);
-    thisBeer.container = container;
-    thisBeer.container.container_size_name = container.container_size.name;
-
-    thisBeer.price = container.price;
-
-    delete thisBeer.container.container_size;
-    delete thisBeer.containers;
-
-    beers.push(thisBeer)
+  beer.containers.map(function(container){
+    container.name = container.container_size.name;
+    return container;
   })
 
-  return beers
+  return beer;
 }
 
 function extractMenuInfo(menu, sections){

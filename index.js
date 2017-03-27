@@ -85,8 +85,8 @@ app.get("/recent/:handle", apicache('30 minutes'), function(req, res, next){
     res.status(404).send(err);
   });
 })
-
-app.get('/beer/:menuId', apicache('2 hours'), function(req, res, next){
+// apicache('2 hours'), 
+app.get('/beer/:menuId', function(req, res, next){
   untappd.getMenu(req.params.menuId).then(function(data){
     res.json(data);
   }, function(err){
