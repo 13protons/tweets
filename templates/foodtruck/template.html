@@ -1,7 +1,7 @@
 <h1>Catering Request</h1>
 <h2><%= slug %></h2>
 <p>Recieved at <%= requestedTime %><p>
-  
+
 <h4>Details</h4>
 <p>
   <a href="mailto:<%= details.email %>?Subject=RE:<%= slug %>" target="_top">Reply to <%= details.name %></a>
@@ -14,6 +14,7 @@
   <tr><td <%=s%>> Start Time         </td> <td <%=s%>><%= start %></td>                 </tr>
   <tr><td <%=s%>> End Time           </td> <td <%=s%>><%= end %></td>                   </tr>
   <tr><td <%=s%>> Flexibile Timing?  </td> <td <%=s%>><%= flexible %></td>              </tr>
+  <tr><td <%=s%>> Special Instructions </td> <td <%=s%>><%= details.instructions  %></td>             </tr>
 
   <tr><td <%=b%> colspan="2"> Service  </td></tr>
 
@@ -24,7 +25,7 @@
 
   <tr><td <%=s%>> Street Address     </td> <td <%=s%>><%= address.street  %></td>       </tr>
   <tr><td <%=s%>> City               </td> <td <%=s%>><%= address.city  %></td>         </tr>
-  <tr><td <%=s%>> State              </td> <td <%=s%>><%= address.state  %></td>        </tr>
+  <tr><td <%=s%>> State              </td> <td <%=s%>><%= address.state.name  %></td>        </tr>
   <tr><td <%=s%>> Zip                </td> <td <%=s%>><%= address.zip  %></td>          </tr>
 
   <tr><td <%=b%> colspan="2"> Contact  </td></tr>

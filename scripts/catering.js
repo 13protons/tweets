@@ -10,7 +10,6 @@ var mailgun = new require('mailgun-js')({
 });
 
 var emailFrom = 'postmaster@slowstogo.com';
-var emailTo = 'catering@slowstogo.com';
 
 module.exports = {
   'log': log
@@ -70,12 +69,13 @@ function requestEmail(body){
 
   var data = {
     from: email,
-    to: body.details.email, //emailTo + ', ' + body.service.cateringEmails,
+    to: body.slows.cateringEmails,
     subject: body.slug,
     html: emailBody,
     'h:Reply-To': body.details.email
   }
 
+  defer.resolve(data);
   // Invokes the method to send emails given the above data with the helper library
   mailgun.messages().send(data, function (err, response) {
       //If there is an error, render the error page
@@ -100,7 +100,6 @@ function confirmEmail(body){
   var _slug = fs.readFileSync('./templates/confirm/slug.html', "utf8");
   body.s = fs.readFileSync('./templates/td-style.txt', "utf8");
   body.b = fs.readFileSync('./templates/separator-style.txt', "utf8");
-  body.emailTo = emailTo;
 
   body.slug = _.template(_slug)(body);
   var emailBody = _.template(_body)(body);
@@ -110,10 +109,10 @@ function confirmEmail(body){
     to: body.details.email,
     subject: body.slug,
     html: emailBody,
-    'h:Reply-To': emailTo + ', ' + body.service.cateringEmails,
+    'h:Reply-To': body.slows.cateringEmails,
   }
 
-  // defer.resolve('response')
+  defer.resolve(data);
   // Invokes the method to send emails given the above data with the helper library
   mailgun.messages().send(data, function (err, response) {
       //If there is an error, render the error page
