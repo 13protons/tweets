@@ -12,6 +12,12 @@
 </p>
 
 <table style="width:500px; margin-left: 50px;">
+  <tr><td <%=b%> colspan="2"> Contact  </td></tr>
+
+  <tr><td <%=s%>> Customer Name  </td> <td <%=s%>><%= details.name  %></td>              </tr>
+  <tr><td <%=s%>> Customer Email </td> <td <%=s%>><%= details.email  %></td>             </tr>
+  <tr><td <%=s%>> Customer Phone </td> <td <%=s%>><%= details.phone  %></td>             </tr>
+  
   <tr><td <%=b%> colspan="2"> Event  </td></tr>
 
   <tr><td <%=s%>> Event Type         </td> <td <%=s%>><%= details.event_type %></td>    </tr>
@@ -34,11 +40,7 @@
   <tr><td <%=s%>> State              </td> <td <%=s%>><%= address.state.name  %></td>        </tr>
   <tr><td <%=s%>> Zip                </td> <td <%=s%>><%= address.zip  %></td>          </tr>
 <% } %>
-  <tr><td <%=b%> colspan="2"> Contact  </td></tr>
 
-  <tr><td <%=s%>> Customer Name  </td> <td <%=s%>><%= details.name  %></td>              </tr>
-  <tr><td <%=s%>> Customer Email </td> <td <%=s%>><%= details.email  %></td>             </tr>
-  <tr><td <%=s%>> Customer Phone </td> <td <%=s%>><%= details.phone  %></td>             </tr>
 </table>
 <hr />
 <p>
